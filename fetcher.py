@@ -32,7 +32,7 @@ async def on_ready():
         js += ']},'
     js += '];'
 
-    with open('channels.js', 'w', encoding='utf-8') as f:
+    with open('pages/channels.js', 'w', encoding='utf-8') as f:
         f.write(js)
 
     await client.close()
