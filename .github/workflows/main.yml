@@ -41,4 +41,7 @@ jobs:
         run: pip install -r requirements.txt
         
       - name: Run Python
+        env:
+            DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+            DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
         run: python fetcher.py
