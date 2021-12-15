@@ -1,18 +1,27 @@
 function writeChannels() {
     document.getElementById('title').innerHTML = serverName;
-    let html = '<ul>';
+
+    let sum = 0;
     for (const category of categories) {
-        html += '<li>' + category.name + '</li>';
-        html += '<ul>';
-        for (const channel of category.channels) {
-            html += '<li>' + channel.name + '</li>';
-            if (channel.hasTopic) {
-                html += '<ul><li>' + channel.topic + '</li></ul>';
-            }
-        }
-        html += '</ul>';
+        sum += category.channels.length;
     }
-    html += '</ul>';
+    document.getElementById('number-of-channels').innerHTML = sum + "";
+    document.getElementById('last-updated').innerHTML = lastUpdated;
+
+    let html = '';
+    for (const category of categories) {
+        html += '<details open>';
+        html += `<summary class="category">${category.name} (${category.channels.length})</summary>`;
+        for (const channel of category.channels) {
+            html += '<div class="channel">';
+            html += '<span class="channel-name"> <span style="color: gray">＃</span> ' + channel.name + '</span>';
+            if (channel.hasTopic) {
+                html += '<br><span class="channel-topic">' + channel.topic + '</span>';
+            }
+            html += '</div>';
+        }
+        html += '</details>';
+    }
     document.getElementById('content').innerHTML = html;
 }
 

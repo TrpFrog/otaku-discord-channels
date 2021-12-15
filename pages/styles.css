@@ -1,0 +1,87 @@
+:root {
+    --main-color: rgb(48, 50, 55);
+    --bkg-color: rgb(29, 31, 33);
+    --discord-blue: rgb(76, 87, 236);
+    --discord-blue-hover: rgb(96, 107, 255);
+}
+
+main {
+    text-align: left;
+    max-width: 800px;
+    display: inline-block;
+    background: var(--main-color);
+    padding: 50px;
+    padding-bottom: 20px;
+}
+
+body {
+    text-align: center;
+    background: var(--bkg-color);
+    color: white;
+    font-family: sans-serif;
+    font-size: 1.2em;
+}
+
+.category {
+    border-radius: 10px;
+    padding: 3px 3px 3px 10px;
+    margin: 20px 0 0 0;
+    font-weight: bold;
+    background-color: var(--discord-blue);
+    cursor: pointer;
+}
+
+.category:hover {
+    background-color: var(--discord-blue-hover);
+}
+
+.channel {
+    border-radius: 10px;
+    background-color: var(--bkg-color);
+    padding: 5px 20px;
+    margin: 10px 0 10px 20px;
+}
+
+#last-updated-field {
+    color: gray;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+#number-of-channels {
+    font-weight: bold;
+}
+
+.channel-topic {
+    color: gray;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+#credit {
+    text-align: center;
+    color: gray;
+    padding-top: 20px;
+    font-size: 30%;
+}
+
+@media (max-width: 800px) {
+    main {
+        padding: 3%;
+    }
+}
+
+@media (max-width: 500px) {
+    body {
+        background: var(--main-color);
+        font-size: 1em;
+    }
+    main {
+        padding: 5px;
+        margin: 0;
+    }
+    h1 {
+        font-size: 1.4em;
+        text-align: center;
+    }
+}
