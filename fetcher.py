@@ -11,6 +11,12 @@ TOKEN: Optional[str] = os.environ.get('DISCORD_BOT_TOKEN')
 GUILD_ID = int(os.environ.get('DISCORD_GUILD_ID'))
 
 
+def current_time() -> str:
+    import datetime
+    now = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+    return f"{now:%Y年%m月%d日 %H:%M:%S}"
+
+
 def indent(s: str, n=1, space=4) -> str:
     lines = s.split('\n')
     whitespace = ' ' * (space * n)
@@ -74,7 +80,8 @@ async def on_ready():
                 ca_record.channels.append(ChannelRecord(ch.name, False, None, ch.type))
         res.append(ca_record)
 
-    js = f'const serverName = "{client.get_guild(GUILD_ID).name}"; \n\n'
+    js = f'const lastUpdated = "{current_time()}"; \n\n'
+    js += f'const serverName = "{client.get_guild(GUILD_ID).name}"; \n\n'
     js += 'const categories = ' + category_array_to_str(res)
     with open('pages/channels.js', 'w', encoding='utf-8') as f:
         f.write(js)
