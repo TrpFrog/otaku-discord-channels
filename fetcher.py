@@ -65,7 +65,8 @@ async def on_ready():
     for category in categories:
         ca_record = CategoryRecord(category.name)
         for ch in category.text_channels:
-            ca_record.channels.append(ChannelRecord(ch.name, ch.nsfw, ch.topic))
+            if len(ch.members) != 0:  # check permission
+                ca_record.channels.append(ChannelRecord(ch.name, ch.nsfw, ch.topic))
         res.append(ca_record)
 
     js = f'const serverName = "{client.get_guild(GUILD_ID).name}"; \n\n'
