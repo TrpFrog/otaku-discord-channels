@@ -34,9 +34,10 @@ class CategoryRecord:
 
 
 class ChannelRecord:
-    def __init__(self, name: str, nsfw: bool, topic: Optional[str] = None):
+    def __init__(self, name: str, nsfw: bool, topic: Optional[str], ch_type: disnake.ChannelType):
         self.name = name
         self.nsfw = nsfw
+        self.type = ch_type
         self.has_topic = topic is not None
         if self.has_topic:
             self.topic = topic
@@ -47,6 +48,7 @@ class ChannelRecord:
         return '{\n' + indent(
             f'"name": "{self.name}",\n'
             f'"nsfw": {str(self.nsfw).lower()},\n'
+            f'"type": "{str(self.type)}",\n'
             f'"hasTopic": {str(self.has_topic).lower()},\n'
             f'"topic": "{self.topic}",'
         ) + '\n}'
@@ -66,7 +68,10 @@ async def on_ready():
         ca_record = CategoryRecord(category.name)
         for ch in category.text_channels:
             if len(ch.members) != 0:  # check permission
-                ca_record.channels.append(ChannelRecord(ch.name, ch.nsfw, ch.topic))
+                ca_record.channels.append(ChannelRecord(ch.name, ch.nsfw, ch.topic, ch.type))
+        for ch in category.voice_channels:
+            if len(ch.members) != 0:  # check permission
+                ca_record.channels.append(ChannelRecord(ch.name, False, None, ch.type))
         res.append(ca_record)
 
     js = f'const serverName = "{client.get_guild(GUILD_ID).name}"; \n\n'
