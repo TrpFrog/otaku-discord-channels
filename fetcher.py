@@ -4,6 +4,7 @@ import os
 from typing import Optional
 
 import disnake
+import bleach
 
 client = disnake.Client()
 
@@ -25,9 +26,13 @@ def indent(s: str, n=1, space=4) -> str:
     return '\n'.join(lines)
 
 
+def clean(s: str) -> str:
+    return bleach.clean(s).replace('"', '&quot;').replace("‘", '&#x27;').replace('\\', '\\\\')
+
+
 class CategoryRecord:
     def __init__(self, name: str):
-        self.name = name
+        self.name = clean(name)
         self.channels = []
 
     def __str__(self):
@@ -41,12 +46,12 @@ class CategoryRecord:
 
 class ChannelRecord:
     def __init__(self, name: str, nsfw: bool, topic: Optional[str], ch_type: disnake.ChannelType):
-        self.name = name
+        self.name = clean(name)
         self.nsfw = nsfw
         self.type = ch_type
         self.has_topic = topic is not None
         if self.has_topic:
-            self.topic = topic
+            self.topic = clean(topic)
         else:
             self.topic = ""
 

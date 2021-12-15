@@ -1,1 +1,2 @@
 disnake~=2.2.2
+bleach~=4.1.0
