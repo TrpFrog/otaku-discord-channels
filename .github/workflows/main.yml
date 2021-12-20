@@ -24,30 +24,4 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-          architecture: 'x64'
-
-      - name: Get Python version
-        run: python -V
-        
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      - name: Run Python
-        env:
-            DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-            DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
-        run: python fetcher.py
-
-      - name: Deploy website
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: pages
+      - run: curl -X POST #{{ secrets.DEPLOY_HOOK }}
