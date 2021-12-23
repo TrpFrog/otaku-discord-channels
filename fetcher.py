@@ -12,6 +12,7 @@ client = disnake.Client()
 TOKEN: Optional[str] = os.environ.get('DISCORD_BOT_TOKEN')
 GUILD_ID = int(os.environ.get('DISCORD_GUILD_ID'))
 
+
 def is_integer(n):
     try:
         int(n)
@@ -42,17 +43,23 @@ def clean(s: str) -> str:
         .replace('\\', '\\\\')
 
 
+def channel_array_to_str(arr):
+    if len(arr) == 0:
+        return '[]'
+    s = ',\n'.join(map(lambda x: str(x), arr))
+    return '[\n' + indent(s) + '\n]'
+
+
 class CategoryRecord:
     def __init__(self, name: str):
         self.name = clean(name)
         self.channels = []
 
     def __str__(self):
-        ch_txt = ',\n'.join(map(lambda x: str(x), self.channels))
-        ch_array = f'[\n{(indent(ch_txt))}\n]' if len(self.channels) > 0 else '[]'
         return '{\n' + indent(
             f'"name": "{self.name}",\n'
-            f'"channels": {ch_array}'
+            f'"type": "category",\n'
+            f'"channels": {channel_array_to_str(self.channels)}'
         ) + '\n}'
 
 
@@ -99,11 +106,6 @@ class ChannelRecord:
         ) + '\n}'
 
 
-def category_array_to_str(arr: [CategoryRecord]):
-    s = ',\n'.join(map(lambda x: str(x), arr))
-    return '[\n' + indent(s) + '\n]'
-
-
 @client.event
 async def on_ready():
     guild = client.get_guild(GUILD_ID)
@@ -135,8 +137,8 @@ async def on_ready():
 
     js = f'const lastUpdated = "{current_time()}"; \n\n'
     js += f'const serverName = "{client.get_guild(GUILD_ID).name}"; \n\n'
-    js += 'const categories = ' + category_array_to_str(res) + '\n\n'
-    js += 'const audit = ' + category_array_to_str(audit_record)
+    js += 'const categories = ' + channel_array_to_str(res) + '\n\n'
+    js += 'const audit = ' + channel_array_to_str(audit_record)
     with open('pages/channels.js', 'w', encoding='utf-8') as f:
         f.write(js)
 
