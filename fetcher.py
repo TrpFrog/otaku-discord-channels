@@ -58,7 +58,9 @@ class CategoryRecord:
 
 class ChannelRecord:
     def __init__(self, name: str, nsfw: bool, topic: Optional[str],
-                 ch_type: disnake.ChannelType, creator: Optional[str] = None,
+                 ch_type: disnake.ChannelType,
+                 category: disnake.CategoryChannel = None,
+                 creator: Optional[str] = None,
                  created_at: datetime = None, is_removed: bool = False):
         self.name = clean(name)
         self.nsfw = nsfw
@@ -68,7 +70,10 @@ class ChannelRecord:
         self.topic = clean(topic) if self.has_topic else ""
 
         self.has_creator = creator is not None
-        self.creator = creator if self.has_creator else ""
+        self.creator = clean(creator) if self.has_creator else ""
+
+        self.has_parent_category = category is not None
+        self.parent_category = clean(category.name) if self.has_parent_category else ""
 
         self.has_created_at = created_at is not None
         if self.has_created_at:
@@ -88,6 +93,8 @@ class ChannelRecord:
             f'"creator": "{self.creator}",\n'
             f'"hasCreatedAt": {str(self.has_created_at).lower()},\n'
             f'"createdAt": "{self.created_at}",\n'
+            f'"hasParentCategory": {str(self.has_parent_category).lower()},\n'
+            f'"parentCategory": "{self.parent_category}",\n'
             f'"isRemoved": {str(self.is_removed).lower()},'
         ) + '\n}'
 
@@ -122,7 +129,7 @@ async def on_ready():
                 continue
             topic = ch.topic if type(ch) == disnake.TextChannel else None
             audit_record.append(ChannelRecord(
-                ch.name, ch.nsfw, topic, ch.type,
+                ch.name, ch.nsfw, topic, ch.type, ch.category,
                 entry.user.name, entry.created_at
             ))
 

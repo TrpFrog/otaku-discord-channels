@@ -65,7 +65,10 @@ function writeLatestChannels() {
 
         html += '<hr>';
         html += '<span class="channel-author">';
-        html += '' + channel.creator + ' ';
+        if (channel.hasParentCategory) {
+            html += 'Category: ' + channel.parentCategory + '<br>';
+        }
+        html += channel.creator + ' ';
         html += '(' + channel.createdAt + ')';
         html += '</span>';
         html += '</div>';
