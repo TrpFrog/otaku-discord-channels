@@ -7,7 +7,8 @@
 
 main {
     text-align: left;
-    max-width: 800px;
+    width: 100%;
+    max-width: min(800px, 90vw);
     display: inline-block;
     background: var(--main-color);
     padding: 50px;
