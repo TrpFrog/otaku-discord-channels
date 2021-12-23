@@ -67,6 +67,8 @@ class ChannelRecord:
         self.creator = creator if self.has_creator else ""
 
         self.has_created_at = created_at is not None
+        if self.has_created_at:
+            created_at += datetime.timedelta(hours=9)
         self.created_at = f'{created_at:%Y年%m月%d日 %H:%M:%S}' if self.has_created_at else ""
 
         self.is_removed = is_removed
