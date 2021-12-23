@@ -36,13 +36,16 @@ h2 {
     margin-bottom: 0;
 }
 
+summary {
+    cursor: pointer;
+}
+
 .category {
     border-radius: 10px;
     padding: 3px 3px 3px 10px;
     margin: 20px 0 0 0;
     font-weight: bold;
     background-color: var(--discord-blue);
-    cursor: pointer;
 }
 
 .category:hover {
