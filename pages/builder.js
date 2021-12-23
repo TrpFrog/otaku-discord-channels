@@ -69,10 +69,6 @@ function writeLatestChannels() {
         html += '(' + channel.createdAt + ')';
         html += '</span>';
         html += '</div>';
-
-        if (channelsCount >= 4) {
-
-        }
     }
     if(channelsCount > 3) {
         html += '</details>'
