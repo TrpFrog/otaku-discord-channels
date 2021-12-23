@@ -35,7 +35,11 @@ def indent(s: str, n=1, space=4) -> str:
 
 
 def clean(s: str) -> str:
-    return bleach.clean(s).replace('"', '&quot;').replace("‘", '&#x27;').replace('\\', '\\\\')
+    s = ' '.join(s.split())
+    return bleach.clean(s) \
+        .replace('"', '&quot;') \
+        .replace("‘", '&#x27;') \
+        .replace('\\', '\\\\')
 
 
 class CategoryRecord:
