@@ -122,6 +122,12 @@ async def on_ready():
                 ca_record.channels.append(ChannelRecord(ch.name, False, None, ch.type))
         res.append(ca_record)
 
+    uncategorized = CategoryRecord('Uncategorized')
+    for ch in list(filter(lambda x: x.category is None, guild.text_channels)):
+        if len(ch.members) != 0:  # check permission
+            uncategorized.channels.append(ChannelRecord(ch.name, ch.nsfw, ch.topic, ch.type))
+    res.append(uncategorized)
+
     audit_record = []
     async for entry in guild.audit_logs(limit=100):
         if entry.action == disnake.AuditLogAction.channel_create:

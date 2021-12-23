@@ -24,7 +24,10 @@ function writeChannels(doSearch, searchWord) {
     document.getElementById('last-updated').innerHTML = lastUpdated;
 
     let html = '';
-    for (const category of categories) {
+    for (let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+        const uncategorized = (i + 1) === categories.length;
+
         let channelsCount = category.channels.length;
         if (doSearch) {
             for (const channel of category.channels) {
@@ -33,6 +36,11 @@ function writeChannels(doSearch, searchWord) {
                 }
             }
             if (channelsCount === 0) continue;
+        }
+
+        if (uncategorized) {
+            if (channelsCount === 0) continue;
+            category.name = '<span style="font-style: italic">カテゴリ未分類</span>';
         }
 
         html += '<details open>';
