@@ -12,6 +12,13 @@ client = disnake.Client()
 TOKEN: Optional[str] = os.environ.get('DISCORD_BOT_TOKEN')
 GUILD_ID = int(os.environ.get('DISCORD_GUILD_ID'))
 
+# If you want to change the display name of a user with a certain ID,
+# add "DISCORD_USER_ID_[NAME]" to the environment variable
+SPECIFIC_USER_ID_LIST = {}
+for (k, v) in os.environ.items():
+    if k.startswith('DISCORD_USER_ID_'):
+        SPECIFIC_USER_ID_LIST[v] = k.replace('DISCORD_USER_ID_', '')
+
 
 def is_integer(n):
     try:
@@ -136,6 +143,10 @@ async def on_ready():
             if is_integer(ch.id) is False or guild.get_channel(int(ch.id)) is None:
                 continue
             topic = ch.topic if type(ch) == disnake.TextChannel else None
+
+            if str(entry.user.id) in SPECIFIC_USER_ID_LIST:
+                entry.user.name = SPECIFIC_USER_ID_LIST[str(entry.user.id)]
+
             audit_record.append(ChannelRecord(
                 ch.name, ch.nsfw, topic, ch.type, ch.category,
                 entry.user.name, entry.created_at
