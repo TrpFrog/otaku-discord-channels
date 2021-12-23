@@ -3,6 +3,16 @@ function init() {
     writeLatestChannels();
 }
 
+function shortenTopic(topic) {
+    const maxLength = 140;
+    if(topic.length <= maxLength) return topic;
+    let html = topic.slice(0, maxLength) + '...';
+    html += '<details><summary>全文を表示</summary>'
+    html += topic
+    html += '</details>';
+    return html;
+}
+
 function writeChannels(doSearch, searchWord) {
     document.getElementById('title').innerHTML = serverName;
 
@@ -34,7 +44,7 @@ function writeChannels(doSearch, searchWord) {
             html += '<div class="channel">';
             html += '<span class="channel-name"> <span style="color: gray">＃</span> ' + channel.name + '</span>';
             if (channel.hasTopic) {
-                html += '<br><span class="channel-topic">' + channel.topic + '</span>';
+                html += '<br><span class="channel-topic">' + shortenTopic(channel.topic) + '</span>';
             }
             html += '</div>';
         }
@@ -60,7 +70,7 @@ function writeLatestChannels() {
         html += '<span class="channel-name"> <span style="color: gray">' + icon + '</span> '
         html += channel.name + '</span>';
         if (channel.hasTopic) {
-            html += '<br><span class="channel-topic">' + channel.topic + '</span>';
+            html += '<br><span class="channel-topic">' + shortenTopic(channel.topic) + '</span>';
         }
 
         html += '<hr>';
