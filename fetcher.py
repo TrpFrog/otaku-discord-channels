@@ -5,15 +5,23 @@ from typing import Optional
 
 import disnake
 import bleach
+import datetime
 
 client = disnake.Client()
 
 TOKEN: Optional[str] = os.environ.get('DISCORD_BOT_TOKEN')
 GUILD_ID = int(os.environ.get('DISCORD_GUILD_ID'))
 
+def is_integer(n):
+    try:
+        int(n)
+    except ValueError:
+        return False
+    else:
+        return True
+
 
 def current_time() -> str:
-    import datetime
     now = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
     return f"{now:%Y年%m月%d日 %H:%M:%S}"
 
@@ -45,15 +53,23 @@ class CategoryRecord:
 
 
 class ChannelRecord:
-    def __init__(self, name: str, nsfw: bool, topic: Optional[str], ch_type: disnake.ChannelType):
+    def __init__(self, name: str, nsfw: bool, topic: Optional[str],
+                 ch_type: disnake.ChannelType, creator: Optional[str] = None,
+                 created_at: datetime = None, is_removed: bool = False):
         self.name = clean(name)
         self.nsfw = nsfw
         self.type = ch_type
+
         self.has_topic = topic is not None
-        if self.has_topic:
-            self.topic = clean(topic)
-        else:
-            self.topic = ""
+        self.topic = clean(topic) if self.has_topic else ""
+
+        self.has_creator = creator is not None
+        self.creator = creator if self.has_creator else ""
+
+        self.has_created_at = created_at is not None
+        self.created_at = f'{created_at:%Y年%m月%d日 %H:%M:%S}' if self.has_created_at else ""
+
+        self.is_removed = is_removed
 
     def __str__(self):
         return '{\n' + indent(
@@ -61,7 +77,12 @@ class ChannelRecord:
             f'"nsfw": {str(self.nsfw).lower()},\n'
             f'"type": "{str(self.type)}",\n'
             f'"hasTopic": {str(self.has_topic).lower()},\n'
-            f'"topic": "{self.topic}",'
+            f'"topic": "{self.topic}",\n'
+            f'"hasCreator": {str(self.has_creator).lower()},\n'
+            f'"creator": "{self.creator}",\n'
+            f'"hasCreatedAt": {str(self.has_created_at).lower()},\n'
+            f'"createdAt": "{self.created_at}",\n'
+            f'"isRemoved": {str(self.is_removed).lower()},'
         ) + '\n}'
 
 
@@ -72,7 +93,8 @@ def category_array_to_str(arr: [CategoryRecord]):
 
 @client.event
 async def on_ready():
-    categories = client.get_guild(GUILD_ID).categories
+    guild = client.get_guild(GUILD_ID)
+    categories = guild.categories
 
     res = []
     for category in categories:
@@ -85,9 +107,23 @@ async def on_ready():
                 ca_record.channels.append(ChannelRecord(ch.name, False, None, ch.type))
         res.append(ca_record)
 
+    audit_record = []
+    async for entry in guild.audit_logs(limit=100):
+        if entry.action == disnake.AuditLogAction.channel_create:
+            ch = entry.target
+            # Check if it is removed channel
+            if is_integer(ch.id) is False or guild.get_channel(int(ch.id)) is None:
+                continue
+            topic = ch.topic if type(ch) == disnake.TextChannel else None
+            audit_record.append(ChannelRecord(
+                ch.name, ch.nsfw, topic, ch.type,
+                entry.user.name, entry.created_at
+            ))
+
     js = f'const lastUpdated = "{current_time()}"; \n\n'
     js += f'const serverName = "{client.get_guild(GUILD_ID).name}"; \n\n'
-    js += 'const categories = ' + category_array_to_str(res)
+    js += 'const categories = ' + category_array_to_str(res) + '\n\n'
+    js += 'const audit = ' + category_array_to_str(audit_record)
     with open('pages/channels.js', 'w', encoding='utf-8') as f:
         f.write(js)
 
