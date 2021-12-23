@@ -22,8 +22,8 @@ function writeChannels(doSearch, searchWord) {
                     channelsCount--;
                 }
             }
+            if (channelsCount === 0) continue;
         }
-        if (channelsCount === 0) continue;
 
         html += '<details open>';
         html += `<summary class="category">${category.name} (${channelsCount})</summary>`;
