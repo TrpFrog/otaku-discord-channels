@@ -15,9 +15,22 @@ function writeChannels(doSearch, searchWord) {
 
     let html = '';
     for (const category of categories) {
+        let channelsCount = category.channels.length;
+        if (doSearch) {
+            for (const channel of category.channels) {
+                if (channel.name.indexOf(searchWord) === -1) {
+                    channelsCount--;
+                }
+            }
+        }
+        if (channelsCount === 0) continue;
+
         html += '<details open>';
-        html += `<summary class="category">${category.name} (${category.channels.length})</summary>`;
+        html += `<summary class="category">${category.name} (${channelsCount})</summary>`;
         for (const channel of category.channels) {
+            if (doSearch && channel.name.indexOf(searchWord) === -1) {
+                continue;
+            }
             html += '<div class="channel">';
             html += '<span class="channel-name"> <span style="color: gray">＃</span> ' + channel.name + '</span>';
             if (channel.hasTopic) {
@@ -65,6 +78,22 @@ function writeLatestChannels() {
         html += '</details>'
     }
     document.getElementById('latest').innerHTML = html;
+}
+
+function searchChannels() {
+    const val = document.getElementById('search-box').value;
+    if (val === '') {
+        resetSearch();
+    } else {
+        writeChannels(true, val);
+        document.getElementById('reset-button').style.display = 'inline';
+    }
+}
+
+function resetSearch() {
+    document.getElementById('search-box').value = '';
+    document.getElementById('reset-button').style.display = 'none';
+    writeChannels(false, '');
 }
 
 onload = init;

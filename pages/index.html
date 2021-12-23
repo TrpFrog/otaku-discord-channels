@@ -25,6 +25,12 @@
             <div id="latest"></div>
 
             <h2>チャンネル一覧</h2>
+            <form onsubmit="searchChannels();return false;" style="margin: 15px 0">
+                <label for="search-box"></label>
+                <input type="text" placeholder="チャンネルを検索" id="search-box">
+                <input type="submit" value="検索">
+                <input type="button" value="リセット" onclick="resetSearch()" style="display: none" id="reset-button">
+            </form>
             <div id="content"></div>
             <p id="credit">
                 このサイトを作った人: つまみ (@TrpFrog)<br>
