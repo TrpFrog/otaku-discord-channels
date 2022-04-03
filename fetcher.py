@@ -78,7 +78,8 @@ class ChannelRecord:
                  ch_type: disnake.ChannelType,
                  category: disnake.CategoryChannel = None,
                  creator: Optional[str] = None,
-                 created_at: datetime = None, is_removed: bool = False):
+                 created_at: datetime = None, is_removed: bool = False,
+                 last_updated: datetime = None):
         self.name = clean(name)
         self.nsfw = nsfw
         self.type = ch_type
@@ -97,6 +98,11 @@ class ChannelRecord:
             created_at += datetime.timedelta(hours=9)
         self.created_at = f'{created_at:%Y年%m月%d日 %H:%M:%S}' if self.has_created_at else ""
 
+        self.has_last_updated = last_updated is not None
+        if self.has_last_updated:
+            last_updated += datetime.timedelta(hours=9)
+        self.last_updated = f'{last_updated:%Y年%m月%d日 %H:%M:%S}' if self.has_last_updated else ""
+
         self.is_removed = is_removed
 
     def __str__(self):
@@ -110,6 +116,8 @@ class ChannelRecord:
             f'"creator": "{self.creator}",\n'
             f'"hasCreatedAt": {str(self.has_created_at).lower()},\n'
             f'"createdAt": "{self.created_at}",\n'
+            f'"hasLastUpdated": {str(self.has_last_updated).lower()},\n'
+            f'"lastUpdated": "{self.last_updated}",\n'
             f'"hasParentCategory": {str(self.has_parent_category).lower()},\n'
             f'"parentCategory": "{self.parent_category}",\n'
             f'"isRemoved": {str(self.is_removed).lower()},'
@@ -124,20 +132,33 @@ async def on_ready():
     res = []
     for category in categories:
         ca_record = CategoryRecord(category.name)
-        for ch in category.text_channels:
+        for idx, ch in enumerate(category.text_channels):
+            print(ch.name, idx, len(category.text_channels))
             if len(ch.members) != 0:  # check permission
-                ca_record.channels.append(ChannelRecord(ch.name, ch.nsfw, ch.topic, ch.type))
+                m_id = ch.last_message_id
+                last_updated = None
+                if m_id is not None:
+                    try:
+                        message = await ch.fetch_message(m_id)
+                        last_updated = message.created_at
+                    except disnake.errors.NotFound:
+                        pass
+                ca_record.channels.append(
+                    ChannelRecord(ch.name, ch.nsfw, ch.topic, ch.type, last_updated=last_updated)
+                )
         for ch in category.voice_channels:
             if len(ch.members) != 0:  # check permission
                 ca_record.channels.append(ChannelRecord(ch.name, False, None, ch.type))
         res.append(ca_record)
 
+    # Category: UNCATEGORIZED
     uncategorized = CategoryRecord('Uncategorized')
     for ch in list(filter(lambda x: x.category is None, guild.text_channels)):
         if len(ch.members) != 0:  # check permission
             uncategorized.channels.append(ChannelRecord(ch.name, ch.nsfw, ch.topic, ch.type))
     res.append(uncategorized)
 
+    # latest channels
     audit_record = []
     async for entry in guild.audit_logs(limit=100):
         if entry.action == disnake.AuditLogAction.channel_create:
