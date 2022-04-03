@@ -2,6 +2,7 @@
 
 import os
 from typing import Optional
+from dotenv import load_dotenv
 
 import disnake
 import bleach
@@ -9,6 +10,8 @@ import datetime
 
 client = disnake.Client()
 
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(env_path)
 TOKEN: Optional[str] = os.environ.get('DISCORD_BOT_TOKEN')
 GUILD_ID = int(os.environ.get('DISCORD_GUILD_ID'))
 
