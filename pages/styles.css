@@ -80,6 +80,13 @@ summary {
     margin-bottom: 20px;
 }
 
+.channel-name {
+    display: flex; 
+    justify-content: space-between;
+    margin: 0;
+    word-break: break-all;
+}
+
 .channel-topic {
     color: gray;
     font-style: italic;
@@ -89,6 +96,17 @@ summary {
 .channel-author {
     color: gray;
     font-size: 0.9em;
+}
+
+.outdated {
+    --color: gray;
+    height: 1.5em;
+    color: var(--color);
+    border: 2px solid var(--color);
+    border-radius: 1000px;
+    font-size: 0.7em;
+    padding: 2px 0.5em;
+    white-space: nowrap;
 }
 
 #credit {
@@ -150,5 +168,8 @@ input:not(#search-box) {
     h1 {
         font-size: 1.4em;
         text-align: center;
+    }
+    .channel {
+        padding-right: 0.8em;
     }
 }

@@ -14,6 +14,31 @@ function shortenTopic(topic) {
     `;
 }
 
+function getOutdatedLabel(channel) {
+    if (!channel.hasLastUpdated) {
+        return `
+            <span class="outdated">
+                未使用
+            </span>
+        `
+    } else {
+        const sp = channel.lastUpdated.split(/[年月日 ]/g).filter(e => e);
+        const date = Date.parse(`${sp[0]}-${sp[1]}-${sp[2]} ${sp[3]} GMT+0900`);
+        const now = Date.now();
+        const oneMonth = 1000 * 60 * 60 * 24 * 30.5;
+        if(now - date < 4 * oneMonth) {
+            return ''
+        } else {
+            const mon = Math.floor((now - date) / oneMonth);
+            return `
+                <span class="outdated">
+                    ${mon}か月未使用
+                </span>
+            `
+        }
+    }
+}
+
 function writeChannels(doSearch, searchWord) {
     document.getElementById('title').innerHTML = serverName;
 
@@ -55,11 +80,13 @@ function writeChannels(doSearch, searchWord) {
                     .map(channel => (`
                         <div class="channel">
                             <span class="channel-name">
-                                <span style="color: gray">＃</span>
-                                ${channel.name}
+                                <span>
+                                    <span style="color: gray">＃</span>
+                                    ${channel.name}
+                                </span>
+                                ${getOutdatedLabel(channel)}
                             </span>
                             ${channel.hasTopic ? `
-                                <br>
                                 <span class="channel-topic">
                                     ${shortenTopic(channel.topic)}
                                 </span>
@@ -77,13 +104,14 @@ function writeLatestChannels() {
     const channelHTMLs = audit.map(channel => (`
         <div class="channel latest-channel">
             <span class="channel-name">
-                <span style="color: gray">
-                    ${channel.type === 'text' ? '＃' : 'Category: '}
+                <span>
+                    <span style="color: gray">
+                        ${channel.type === 'text' ? '＃' : 'Category: '}
+                    </span>
+                    ${channel.name}
                 </span>
-                ${channel.name}
             </span>
             ${channel.hasTopic ? `
-                <br>
                 <span class="channel-topic">
                     ${shortenTopic(channel.topic)}
                 </span>
