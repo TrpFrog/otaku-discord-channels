@@ -23,7 +23,7 @@ function getOutdatedLabel(channel) {
         `
     } else {
         const sp = channel.lastUpdated.split(/[年月日 ]/g).filter(e => e);
-        const date = Date.parse(`${sp[0]}-${sp[1]}-${sp[2]} ${sp[3]} GMT+0900`);
+        const date = Date.parse(`${sp[0]}/${sp[1]}/${sp[2]} ${sp[3]} GMT+0900`);
         const now = Date.now();
         const oneMonth = 1000 * 60 * 60 * 24 * 30.5;
         if(now - date < 4 * oneMonth) {
