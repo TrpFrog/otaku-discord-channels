@@ -26,7 +26,7 @@ function getOutdatedLabel(channel) {
         const date = Date.parse(`${sp[0]}/${sp[1]}/${sp[2]} ${sp[3]} GMT+0900`);
         const now = Date.now();
         const oneMonth = 1000 * 60 * 60 * 24 * 30.5;
-        if(now - date < 4 * oneMonth) {
+        if (now - date < 4 * oneMonth) {
             return ''
         } else {
             const mon = Math.floor((now - date) / oneMonth);
@@ -39,6 +39,48 @@ function getOutdatedLabel(channel) {
     }
 }
 
+function getServiceStoppingMsg() {
+    const sp = lastUpdated.split(/[年月日 ]/g).filter(e => e);
+    const date = Date.parse(`${sp[0]}/${sp[1]}/${sp[2]} ${sp[3]} GMT+0900`);
+    const now = Date.now();
+    const oneDay = 1000 * 60 * 60 * 24;
+    if (now - date < 2 * oneDay) {
+        return ''
+    } else {
+        return `
+            <div id="service-temporarily-stop-msg-box">
+                <h3>このページの自動更新が止まっている可能性があります！</h3>
+                <p>
+                    <span class="ib">管理者の Twitter (<a href="https://twitter.com/rpFrog">@TrpFrog</a>)</span> 
+                    <span class="ib">または</span><span class="ib">メール (dev<span style="color: #9bc5ff">●</span>trpfrog.net) までご連絡をお願いします🙇</span>
+                </p>
+                <small>
+                    <details>
+                        <summary>このメッセージが表示されている理由</summary>
+                        <p>
+                            このページは GitHub Actions で毎日自動更新されています。
+                            しかし、GitHub Actions は 60 日間メンテナンスを行わないと自動停止してしまいます。
+                            したがって 2 日間以上更新がない現在、このページの自動更新が止まっている可能性があります。
+                        </p>
+                        <p>
+                            <b>Q.</b> 止まらないようにする何らかの仕組み組んだりすれば良いのでは？<br>
+                            <b>A.</b> こんなしょうもないサイトにそんな高度な機能は要らぬ……
+                        </p>
+                        <p>
+                            <b>Q.</b> そういう機能実装して Pull Request を出します！<br>
+                            <b>A.</b> いやでも僕が死んでも未来永劫このサイトが更新され続けるのは GitHub 社に申し訳なくない？
+                        </p>
+                        <p>
+                            <b>Q.</b> この鯖の住人です！メンテするからコラボレータ権限くれ〜<br>
+                            <b>A.</b> 𝑶𝑲 (あげるので僕に聞いてください)
+                        </p>
+                    </details>
+                </small>
+            </div>
+        `
+    }
+}
+
 function writeChannels(doSearch, searchWord) {
     document.getElementById('title').innerHTML = serverName;
 
@@ -48,6 +90,7 @@ function writeChannels(doSearch, searchWord) {
     }
     document.getElementById('number-of-channels').innerHTML = sum + "";
     document.getElementById('last-updated').innerHTML = lastUpdated;
+    document.getElementById('service-temporarily-stop-msg').innerHTML = getServiceStoppingMsg();
 
     let html = '';
     for (let i = 0; i < categories.length; i++) {
@@ -75,9 +118,9 @@ function writeChannels(doSearch, searchWord) {
                     ${category.name} (${channelsCount})
                 </summary>
                 ${category
-                    .channels
-                    .filter(channel => !(doSearch && !channel.name.includes(searchWord)))
-                    .map(channel => (`
+                .channels
+                .filter(channel => !(doSearch && !channel.name.includes(searchWord)))
+                .map(channel => (`
                         <div class="channel">
                             <span class="channel-name">
                                 <span>
@@ -93,7 +136,7 @@ function writeChannels(doSearch, searchWord) {
                             ` : ''}
                         </div>
                     `)).join('')
-                }
+            }
             </details>
         `;
     }

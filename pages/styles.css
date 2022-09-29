@@ -28,12 +28,10 @@ h2 {
     --marker-begin: 60%;
     --marker-end: 90%;
     --marker-color: var(--discord-blue);
-    background: linear-gradient(
-            transparent var(--marker-begin),
+    background: linear-gradient(transparent var(--marker-begin),
             var(--marker-color) var(--marker-begin),
             var(--marker-color) var(--marker-end),
-            transparent var(--marker-end)
-    );
+            transparent var(--marker-end));
     margin-bottom: 0;
 }
 
@@ -81,7 +79,7 @@ summary {
 }
 
 .channel-name {
-    display: flex; 
+    display: flex;
     justify-content: space-between;
     margin: 0;
     word-break: break-all;
@@ -161,15 +159,47 @@ input:not(#search-box) {
         background: var(--main-color);
         font-size: 1em;
     }
+
     main {
         padding: 5px;
         margin: 0;
     }
+
     h1 {
         font-size: 1.4em;
         text-align: center;
     }
+
     .channel {
         padding-right: 0.8em;
     }
+}
+
+a:link {
+    color: #9bc5ff;
+}
+
+a:visited {
+    color: #c88dff;
+}
+
+a:hover {
+    color: #ffffff;
+}
+
+a:active {
+    color: #ff4040;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.ib {
+    display: inline-block;
+}
+
+#service-temporarily-stop-msg-box {
+    padding: .2em 1em 1em;
+    background-color: rgb(31, 1, 68);
+    border-radius: 10px;
+    color: rgb(237, 241, 253);
 }
